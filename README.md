@@ -6,23 +6,22 @@ This is a React web application that displays a table of movies with their detai
 
 To install and run the app on your local machine, please follow the instructions below:
 
-Markup: 1. Clone the repository using the following command:
+1. Clone the repository using the following command:
    
    git clone https://github.com/<username>/movie-table-app.git
    
- Markup: 2. Navigate to the project directory and install the required dependencies:
-    cd movie-table-app
-     npm install
+ 2. Navigate to the project directory and install the required dependencies:
+   cd movie-table-app
+    ### 'npm install'
   
-   Markup: 3. Start the development server:
-      npm start
+ 3. Start the development server:
+    ### 'npm start'
 
- Markup: 4. Open the app in your web browser by navigating to http://localhost:3000.
-
-### `npm start`
+ 4. Open the app in your web browser by navigating to http://localhost:3000.
 
 Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
+   Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
