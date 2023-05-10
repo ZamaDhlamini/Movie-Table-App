@@ -81,7 +81,7 @@ function MovieTable(){
     useEffect(() => {
       setFilteredData(
         data.filter((item) =>
-          item.title.toLowerCase().includes(searchTerm.toLowerCase())
+          item.title?.toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
     }, [data, searchTerm]);

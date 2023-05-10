@@ -5,6 +5,6 @@ const UserProvider: FC<PropsWithChildren> = ({children}) => {
     const [state, dispatch] = useReducer(useReducer, INITIAL_STATE);
 
     const createUser = async (payload:IUser) => {
-        
+        await fetch
     }
 }
