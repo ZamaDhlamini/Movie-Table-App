@@ -3,13 +3,21 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import MovieTable from './MovieTable';
+import { BrowserRouter } from 'react-router-dom';
+
 
 
 //@ts-ignore
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
+ReactDOM.render(
+  <BrowserRouter>
     <App />
-  </React.StrictMode>
+  </BrowserRouter>,
+  document.getElementById('root')
 );
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+//   <React.StrictMode>
+//     <App />
+//   </React.StrictMode>
+// );
 

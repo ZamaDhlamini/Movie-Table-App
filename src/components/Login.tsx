@@ -11,15 +11,11 @@ type LoginProps = {
     const [pass, setPass] = useState('');
     const [userName, setUserName] = useState('');
     const [showTable, setShowTable] = useState(false);
-    const [disableLogin, setDisableLogin] = useState(false);
 
     const toggleTable = () => {
         setShowTable(!showTable);
     }
 
-    const toggleOffLogin = () => {
-        setDisableLogin(!disableLogin);
-    }
 
     function handleClick(){
         console.log('you are being clicked');
@@ -32,7 +28,7 @@ type LoginProps = {
     
     return (
         <div className="auth-form-container">
-            <h2 className="title">Login</h2>
+            <h2 className="title" onSubmit={toggleTable}>Login</h2>
             <form className="login-form" onSubmit={handleSubmit}>
                 <label htmlFor="UserName">UserName</label>
                 <input value={userName} onChange={(e) => setUserName(e.target.value)}type="UserName" placeholder="" id="UserName" name="userName" />
@@ -44,8 +40,6 @@ type LoginProps = {
             </form>
             <button className="link-btn" onClick={() => onFormSwitch('register')}>Don't have an account? Register here.</button>
             {showTable ? <MovieTable /> : null}
-            {disableLogin ? <Login onFormSwitch={function (form: string): void {
-            } } /> : null}
         </div>
     );
     };

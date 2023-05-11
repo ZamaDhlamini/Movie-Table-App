@@ -9,6 +9,7 @@ import { type } from "os";
 import MovieDetails from "./MovieDetails";
 import { Button, Modal, Form, Input } from 'antd';
 import type { SizeType } from "antd/es/config-provider/SizeContext";
+import useHistory from 'react-router-dom';
 
 
 function MovieTable(){

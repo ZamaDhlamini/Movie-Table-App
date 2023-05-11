@@ -7,6 +7,7 @@ import './fonts/open sans/OpenSans-Italic-VariableFont_wdth,wght.ttf';
 import MovieTable from "./MovieTable";
 
 
+
 function App() {
  
   const [currentForm, setCurrentForm] = useState('login');
