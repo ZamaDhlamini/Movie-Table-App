@@ -1,7 +1,7 @@
 import { UserActionEnum } from "./action";
 import { IUserStateContext } from "./context";
 
-export function UserReducer(incomingState: IUserStateContext, action: ReduxActions.Action<IUserStateContext>): IUserStateContext{
+export function UseReducer(incomingState: IUserStateContext, action: ReduxActions.Action<IUserStateContext>): IUserStateContext{
     const {type, payload} = action;
 
     switch (type){

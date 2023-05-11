@@ -66,45 +66,95 @@ function MovieTable(){
     }, []);
 
 
+    //SEARCHING STATE VARIABLE
+  const [searchText, setSearchText] = useState('');
+  
+  //FILTERED DATA VARIABLE
+  const [filteredData, setFilteredData] = useState<Data[]>(data);
+  
+  //HANDLE SEARCH FUNCTION
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(event.target.value);
+  };
+
     const {
       getTableProps,
       getTableBodyProps,
       headerGroups,
       rows,
       prepareRow,
-    }  = useTable({ columns, data});
+    }  = useTable({ columns, data: filteredData});
 
-    //SEARCHING STATE VARIABLE
-    const [searchTerm, setSearchTerm] = useState("");
-    const [filteredData, setFilteredData] = useState<Data[]>([]);
 
-    useEffect(() => {
-      setFilteredData(
-        data.filter((item) =>
-          item.title?.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
-    }, [data, searchTerm]);
-  
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchTerm(e.target.value);
-    };
+//UPDATE FILTERED DATA WHEN SEARCH TEXT CHANGES
+useEffect(() => {
+  const newFilteredData = data.filter((row) => {
+    return (
+      row.title?.toLowerCase().includes(searchText.toLowerCase()) ||
+      row.category?.toLowerCase().includes(searchText.toLowerCase())
+    );
+  });
+  setFilteredData(newFilteredData);
+}, [searchText, data]);
 
 
 
     //EDIT AFTER VIEW
     const [isEditMode, setIsEditMode] = useState(false);
+    const [editedData, setEditedData] = useState<Data>({});
+
+    const handleEditClick = () => {
+      setIsEditMode(true);
+      setEditedData(selectedRowData); // Initialize editedData with the current values
+    }
+
+    const handleSaveClick = () => {
+      // Update the data in your application's state or API with editedData
+      // ...
+      setIsEditMode(false);
+    }
+
+    const handleCancelClick = () => {
+      setIsEditMode(false);
+      setEditedData({});
+    }
+
+    const handleFormChange = (field: string, value: string) => {
+      setEditedData(prevData => ({
+        ...prevData,
+        [field]: value,
+      }));
+    }
+
+    const EditMovieForm = () => {
+      return (
+        <Form>
+          <Form.Item label="Title">
+            <Input value={editedData.title} onChange={(e) => handleFormChange('title', e.target.value)} />
+          </Form.Item>
+          <Form.Item label="Duration">
+            <Input value={editedData.duration} onChange={(e) => handleFormChange('duration', e.target.value)} />
+          </Form.Item>
+          <Form.Item label="Starring">
+            <Input value={editedData.staring} onChange={(e) => handleFormChange('staring', e.target.value)} />
+          </Form.Item>
+          <Form.Item label="Category">
+            <Input value={editedData.category} onChange={(e) => handleFormChange('category', e.target.value)} />
+          </Form.Item>
+        </Form>
+      );
+    }
 
     
     //VIEW STATE
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-    const [selectedRowData, setSelectedRowData] = useState<Data | null>(null);
+    const [selectedRowData, setSelectedRowData] = useState<Data>({});
 
 
     //VIEW MODAL FUNCTIONS
 
     const showViewModal = (rowData: Data) => {
-      setSelectedRowData(rowData);
+      setSelectedRowData(rowData ?? {});
       setIsViewModalOpen(true);
     }
 
@@ -112,6 +162,28 @@ function MovieTable(){
       setIsViewModalOpen(false);
     }
 
+    const viewCancelClick = () => {
+      setIsViewModalOpen(false);
+    }
+
+    //sort data variables
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+    const handleSortClick = () => {
+      const sortedData = [...filteredData].sort((a, b) => {
+        if (!a.title || !b.title) {
+          return 0;
+        }
+        if (sortOrder === "asc") {
+          return a.title.localeCompare(b.title);
+        } else {
+          return b.title.localeCompare(a.title);
+        }
+      });
+      setFilteredData(sortedData);
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    };
+    
   
     const ViewMovieModal = ({
       title,
@@ -125,35 +197,52 @@ function MovieTable(){
             title="Detail of Movie"
             visible={isViewModalOpen}
             onOk={handleViewOk}
+            footer={[
+              isEditMode ? (
+                <>
+                  <Button key="cancel" onClick={handleCancelClick}>Cancel</Button>
+                  <Button key="save" type="primary" onClick={handleSaveClick}>Save</Button>
+                </>
+              ) : (
+                <Button type="primary" size="small" onClick={() => setIsEditMode(true)}> Edit </Button>
+              )
+            ]}
           >
-            <Button type="primary" size="small" onClick={() => setIsEditMode(true)}> Edit
-              </Button>
-            <p>
-              <strong>Title:</strong> {title}
-            </p>
-            <p>
-              <strong>Duration:</strong> {duration}
-            </p>
-            <p>
-              <strong>Starring:</strong> {staring}
-            </p>
-            <p>
-              <strong>Category:</strong> {category}
-            </p>
+            {isEditMode ? (
+              <EditMovieForm />
+            ) : (
+              <>
+                <p>
+                  <strong>Title:</strong> {title}
+                </p>
+                <p>
+                  <strong>Duration:</strong> {duration}
+                </p>
+                <p>
+                  <strong>Starring:</strong> {staring}
+                </p>
+                <p>
+                  <strong>Category:</strong> {category}
+                </p>
+              </>
+            )}
+            <button key="cancel" onClick={viewCancelClick}>Cancel</button>
           </Modal>
         </>
       );
     };
+    
 
     //CREATING A NEW MOVIE WITH THE API
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [confirmLoading, setConfirmLoading] = useState(false);
     const [form] = Form.useForm();
   
 
     const handleOk = () => {
       form
-        .validateFields()
-        .then((values) => {
+      .validateFields()
+      .then((values) => {
           fetch("https://localhost:44311/api/services/app/Movie/Create", {
             method: "POST",
             body: JSON.stringify(values),
@@ -169,11 +258,15 @@ function MovieTable(){
                 setData((prevData) => [...prevData, data.result]);
               }
             });
-        })
-        .catch((info) => {
-          console.log("Validate Failed:", info);
-        });
-    };
+          })
+          .catch((info) => {
+            console.log("Validate Failed:", info);
+          });
+          setConfirmLoading(true);
+          setTimeout(() => {
+          setConfirmLoading(false);
+        }, 5000);
+        };
 
     //DELETING A MOVIE
     const handleDeleteClick = async (row: any) => {
@@ -206,6 +299,7 @@ function MovieTable(){
           title="Add Movie"
           visible={isModalVisible}
           onOk={handleOk}
+          confirmLoading={confirmLoading}
           onCancel={() => setIsModalVisible(false)}
           
         >
@@ -250,25 +344,19 @@ function MovieTable(){
       );
     };
 
-    //SEARCHING BY ALSO FILTER
-    // const filteredRows = rows.filter((row: { original: { [s: string]: unknown; } | ArrayLike<unknown>; }) =>
-    // Object.values(row.original)
-    // .join(" ")
-    // .toLowerCase()
-    // .includes(searchTerm.toLowerCase())
-    // );
-    
-    
-  
+
+
     return (
       <div className="App">
+        
         <div className="container">
         <input
-          type="text"
-          placeholder="Search..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      type="text"
+      placeholder="Search by title or category"
+      value={searchText}
+      onChange={handleSearch}
+    />
+        <Button type="primary" onClick={handleSortClick}>Sort</Button>
         <Button type="primary" onClick={() => setIsModalVisible(true)}>
           Add Movie
         </Button>
@@ -305,275 +393,3 @@ function MovieTable(){
     
   }
   export default MovieTable;
-//   const [data, setData] = useState<IMovieInfo[]>([]);
-//   const [searchTerm, setSearchTerm] = useState("");
-//   const [open, setOpen] = useState(false);
-//   const [confirmLoading, setConfirmLoading] = useState(false);
-//   const [modalText, setModalText] = useState('Content of the modal');
-
-//   // interface TableData extends IMovieData {
-
-  
-  
-//   interface IMovieInfo {
-//     id: number;
-//     title: string;
-//     duration: number;
-//     category: string;
-//     starring: string;
-//     release_date: string;
-//   }
-
-//   //   delete: string;
-//   //   view: string;
-//   //   edit: string;
-//   //   actions: (row: any) => JSX.Element;
-//   // }
- 
-  
-//   useEffect(() => {
-//     const fetchMovieData = async () => {
-//       const response = await fetch("https://localhost:44311/api/services/app/Movie/GetAll");
-//       const data = await response.json();
-//     setData(data.result);
-//   };
-//   fetchMovieData();
-//   }, [data]);
-  
-//   interface RowType{
-//     id:number;
-//     title: string;
-//     duration: number;
-//     category: string;
-//     starring: string;
-//     release_date: number;
-//   }
-  
-//   //TABLE DATA
-//   const columns = React.useMemo(
-//     () => [
-//       {
-//         Header: "title",
-//         accessor: "title",
-//       },
-//       {
-//         Header: "duration",
-//         accessor: "duration",
-//       },
-//       {
-//         Header: "category",
-//         accessor: "category",
-//       },
-//       {
-//         Header: "starring",
-//         accessor: "starring",
-//       },
-//       // {
-//         //   Header: "release_Date",
-//         //   accessor: "release_date",
-//       // },
-//       {
-//         Header: "Actions",
-//         accessor: "actions",
-//         Cell: ({ row }: { row: RowType }) => (
-//           <>
-//             {/* <button onClick={() => handleViewMOdal(row)}>View</button> */}
-//             <button onClick={() => handleEdit(row)}>Edit</button>
-//             <button onClick={() => handleDeleteClick(row)}>Delete</button>
-//           </>
-//         ),
-//       },
-//     ],
-//     []
-//     );
-//     //TABLE DATA
-
-//     const showModal = () => {
-//       setOpen(true);
-//     };
-    
-//     const handleOk = () => {
-//       setModalText('The modal will be closed after two seconds');
-//       setConfirmLoading(true);
-//       setTimeout(() => {
-//         setOpen(false);
-//         setConfirmLoading(false);
-//       }, 2000);
-//     };
-
-//     const handleCancel = () => {
-//       console.log('Clicked cancel button');
-//       setOpen(false);
-//     };
-//     //TABLE PROPS
-//     const {
-//       getTableProps,
-//       getTableBodyProps,
-//       headerGroups,
-//       rows,
-//       prepareRow,
-//     } = useTable({ columns, data });
-//     //TABLE PROPS
-    
-//     // const rows: RowType[] = [{ id: 1, title: "John Doe", duration: 120, category: "Fanatsy", starring: "Keanu Reaves", release_date:120 } // add more rows here];
-    
-//     // Filter the table data based on the search term
-//     const filteredRows = rows.filter((row: { original: { [s: string]: unknown; } | ArrayLike<unknown>; }) =>
-//     Object.values(row.original)
-//     .join(" ")
-//     .toLowerCase()
-//     .includes(searchTerm.toLowerCase())
-//     );
-
-//     const [selectedMovie, setSelectedMovie] = useState<IMovieInfo | null>(null);
-
-//     const handleViewMOdal =(row: { original: IMovieInfo }) => {
-//       //handle the logic for the view page
-//     }
-    
-//   const handleEdit = (row: any) => {
-//     //handle the logic for the edit page
-//   }
-//   const handleDeleteClick = async (row: any) => {
-//     try {
-//       const response = await fetch(
-//         `https://localhost:44311/api/services/app/Movie/Delete?id=${row.original.id}`,
-//         {
-//           method: "DELETE",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//         }
-//       );
-//       const result = await response.json();
-//       if (result.success) {
-//         setData((prevData) =>
-//           prevData.filter((d) => d.id !== row.original.id)
-//         );
-//       }
-//     } catch (error) {
-//       console.error(error);
-//     }
-//   };
-
-
-//   //add movie pop up
-//   const handleAddMovie = () => {
-//     setIsPopupOpen(true);
-//   };
-// // add movie pop up
-//   const [isPopupOpen, setIsPopupOpen] = useState(false);
-
-//   interface FormEvent extends React.FormEvent<HTMLFormElement> {
-//     target: HTMLFormElement;
-//   }
-
-//   const handleSubmit = async (event: FormEvent) => {
-//     event.preventDefault();
-//     const newMovie = {
-//       title: event.target.title.valueOf,
-//       duration: event.target.duration.value,
-//       category: event.target.category.value,
-//       staring: event.target.starring.value,
-//       release_date: event.target.release_date.value,
-//     };
-
-//   try {
-//     const response = await fetch("https://localhost:44311/api/services/app/Movie/Create", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(newMovie),
-//     });
-//     const data = await response.json();
-//     setData([...data.result, newMovie]);
-//     setIsPopupOpen(false);
-//     console.log('pop up closes');
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
-
-// //TABLE DIV INFO
-// return (
-//   <div className="App">
-//        {/* <Button type="primary" onClick={showModal}>
-//         Open Modal with async logic
-//       </Button>
-//       <Modal
-//         title="Title"
-//         open={open}
-//         onOk={handleOk}
-//         confirmLoading={confirmLoading}
-//         onCancel={handleCancel}
-//       >
-//         <p>{modalText}</p>
-//       </Modal> */}
-//       <div className="container">
-//         <input
-//           type="text"
-//           placeholder="Search..."
-//           value={searchTerm}
-//           onChange={(e) => setSearchTerm(e.target.value)}
-//         />
-//         <div className="addMovieButton">
-//           <button onClick={handleAddMovie}>Add Movie</button>
-//         </div>
-//         <table {...getTableProps()}>
-//           <thead>
-//             {headerGroups.map((headerGroup:any) => (
-//               <tr {...headerGroup.getHeaderGroupProps()}>
-//                 {headerGroup.headers.map((column:any) => (
-//                   <th {...column.getHeaderProps()}>
-//                     {column.render("Header")}
-//                   </th>
-//                 ))}
-//               </tr>
-//             ))}
-//           </thead>
-//           <tbody {...getTableBodyProps()}>
-//             {filteredRows.map((row:any) => {
-//               prepareRow(row);
-//               return (
-//                 <tr {...row.getRowProps()}>
-//                   {row.cells.map((cell:any) => (
-//                     <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-//                   ))}
-//                 </tr>
-//               );
-//             })}
-//           </tbody>
-//         </table>
-//         {isPopupOpen && (
-//           <div className="popup">
-//             <h1>Add New Movie</h1>
-//             <form onSubmit={handleSubmit}>
-//               <label>
-//                 Title:
-//                 <input type="text" name="title" required />
-//               </label>
-//               <label>
-//                 Duration:
-//                 <input type="text" name="duration" required />
-//               </label>
-//               <label>
-//                 Category:
-//                 <input type="text" name="category" required />
-//               </label>
-//               <label>
-//                 Starring:
-//                 <input type="text" name="starring" required />
-//               </label>
-//               <label>
-//                 Release Date:
-//                 <input type="text" name="release_date" required />
-//               </label>
-//               <button type="submit">Add</button>
-//             </form>
-//           </div>
-//         )}
-//       </div>
-//   </div>
-// );
-//TABLE DIV INFO

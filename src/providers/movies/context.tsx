@@ -11,7 +11,7 @@ export interface IMovie{
 
 export interface IMovieStateContext{
     readonly MovieCreated?: IMovie
-    readonly MovieGotten?: IMovie
+    readonly MovieGotten?: IMovie[]
     readonly MovieUpdated?: IMovie
     readonly MovieDeleted?: IMovie
 
