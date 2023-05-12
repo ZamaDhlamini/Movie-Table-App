@@ -62,6 +62,7 @@ import './loginstyle.css';
 import Auth from './components/Auth';
 import MovieTable from './MovieTable';
 import { useNavigate } from 'react-router-dom';
+import NavBar from './components/NavBar';
 import { Header } from 'antd/es/layout/layout';
 
 const App: React.FC = () => {
@@ -83,6 +84,7 @@ const App: React.FC = () => {
   return (
     <div>
       {/* <Header /> */}
+      <NavBar />
       <h1 id='title' style={{fontFamily: "monospace"}}>Movie APP</h1>
       <Auth onLogin={handleLogin} onRegister={handleRegister} isLoggedIn={isLoggedIn} />
       {isLoggedIn && <MovieTable />}
