@@ -1,6 +1,20 @@
 .App {
   text-align: center;
 }
+
+ h1 {
+  font-size:34px; font-weight:500; text-transform:uppercase;
+}
+h1:before {
+    background-color: #c500a4;
+    border-radius: 0.25rem;
+    content: '';
+    display: block;
+    height: 0.25rem;
+    width: 42px;
+    margin-bottom: 1.25rem;
+}
+
 /* login page css */
 .auth-form-container {
   position: relative;
@@ -106,7 +120,7 @@ h1 {
   left: 0;
 }
 /* table pop up css */
-.popup {
+/* .popup {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -160,4 +174,4 @@ h1 {
   to {
     transform: rotate(360deg);
   }
-}
+} */

@@ -74,8 +74,107 @@ tbody td:hover:before {
   z-index: -1;
 }
 
+/* Button CSS */
+.tableButton button {
+  background-color: #ffffff;
+  border: 1px solid #d5d9d9;
+  border-radius: 10px;
+  box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+  box-sizing: border-box;
+  color: #0f1111;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-around;
+  font-family: "Amazon Ember",sans-serif;
+  font-size: 13px;
+  line-height: 30px;
+  padding: 0 7px 0 11px;
+  position: relative; 
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  width: 100px;
+}
+
+.addMovieButton button{
+  background-color: #ffffff;
+  border: 1px solid #d5d9d9;
+  border-radius: 10px;
+  box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+  box-sizing: border-box;
+  color: #0f1111;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-around;
+  font-family: "Amazon Ember",sans-serif;
+  font-size: 15px;
+  line-height: 30px;
+  padding: 0 7px 0 11px;
+  position: relative; 
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  width: 100px;
+}
 
 
+.sortButton button{
+  background-color: #ffffff;
+  border: 1px solid #d5d9d9;
+  border-radius: 10px;
+  box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+  box-sizing: border-box;
+  color: #0f1111;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-around;
+  font-family: "Amazon Ember",sans-serif;
+  font-size: 15px;
+  line-height: 30px;
+  padding: 0 7px 0 11px;
+  position: relative; 
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  width: 100px;
+}
+
+.tableButton:hover {
+  background-color: #f7fafa;
+}
+
+.tableButton:focus {
+  border-color: #008296;
+  box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+  outline: 0;
+}
+
+/* SEARCH INPUT */
+.searchInput input:focus:not(:active) {
+  box-shadow: rgba(72, 95, 199, .25) 0 0 0 .125em;
+  width: 100%;
+  color: rgb(36, 35, 42);
+  font-size: 16px;
+  line-height: 20px;
+  min-height: 28px;
+  border-radius: 4px;
+  padding: 8px 16px;
+  border: 2px solid transparent;
+  box-shadow: rgb(0 0 0 / 12%) 0px 1px 3px, rgb(0 0 0 / 24%) 0px 1px 2px;
+  background: rgb(251, 251, 251);
+  transition: all 0.1s ease 0s;
+  /* :focus{
+      border: 2px solid rgb(124, 138, 255); */
+}
 
 
 /* .addMovieButton {

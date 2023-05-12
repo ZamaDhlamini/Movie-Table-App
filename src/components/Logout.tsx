@@ -1,15 +1,16 @@
 import React from "react";
-import useHistory from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+
 
 const LogoutButton: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     // TODO: Add logout functionality here
     // For example, remove the user's authentication token from local storage
 
     // Redirect the user to the login page
-    history.push("/login");
+    navigate("../Login");
   };
 
   return (

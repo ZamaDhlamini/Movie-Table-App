@@ -9,7 +9,8 @@ import { type } from "os";
 import MovieDetails from "./MovieDetails";
 import { Button, Modal, Form, Input } from 'antd';
 import type { SizeType } from "antd/es/config-provider/SizeContext";
-import useHistory from 'react-router-dom';
+
+
 
 
 function MovieTable(){
@@ -20,8 +21,21 @@ function MovieTable(){
     staring?: string;
     category?: string;
     release_date?: number;
+    poster?: "./barbie_poster"
   }
-  
+
+  const _data = [
+    {
+      id: 1,
+      title: "Barbie Movie",
+      duration: "1h 30m",
+      staring: "Barbie",
+      category: "Animation",
+      poster: "barbie_poster.jpg",
+    },
+    // ...
+  ];
+
   
     const [data, setData] = React.useState<Data[]>([]);
     const columns = React.useMemo(
@@ -30,6 +44,15 @@ function MovieTable(){
         //   Header: "ID",
         //   accessor: "id",
         // },
+        {
+          Header: "Poster",
+          accessor: "poster",
+          Cell: ({ row }: { row: any }) => (
+            <div className="poster">
+            <img src="barbie_poster" />
+            </div>
+          ),
+        },
         {
           Header: "Title",
           accessor: "title",
@@ -50,9 +73,15 @@ function MovieTable(){
           Header: "Actions",
           accessor: "action",
           Cell: ({ row }: { row:any }) => (
-                      <>
+            <>
+                      <div className="tableButton">
+                        <div>
                         <button onClick={() => showViewModal(row.original)}>View</button>
-                        <button onClick={() => handleDeleteClick(row)}>Delete</button>
+                        </div>
+                        <div>
+                          <button onClick={() => handleDeleteClick(row)}>Delete</button>
+                        </div>
+                      </div>
                       </>
                     ),
         },
@@ -351,16 +380,22 @@ useEffect(() => {
       <div className="App">
         
         <div className="container">
-        <input
+          <div className="search">
+        <input className="searchInput"
       type="text"
       placeholder="Search by title or category"
       value={searchText}
       onChange={handleSearch}
-    />
-        <Button type="primary" onClick={handleSortClick}>Sort</Button>
-        <Button type="primary" onClick={() => setIsModalVisible(true)}>
+      />
+      </div>
+        <div className="sortButton">
+        <button onClick={handleSortClick}>Sort</button>
+        </div>
+        <div className="addMovieButton">
+        <button onClick={() => setIsModalVisible(true)}>
           Add Movie
-        </Button>
+        </button>
+        </div>
           <table {...getTableProps()}>
             <thead>
               {headerGroups.map((headerGroup: any) => (
