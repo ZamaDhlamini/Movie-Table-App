@@ -94,10 +94,16 @@ input[type="submit"]:active {
 	color:darkgray;
 }
 
+#title{
+    font-family: fantasy;
+    margin: 10;
+    text-align: center;
+}
+
 #logo {
 	margin:0 auto;
 	width:200px;
-	font-family:'Lily Script One', cursive;
+	font-family:'Lily Script One';
 	font-size:60px;
 	font-weight:bold;
 	text-align:center;

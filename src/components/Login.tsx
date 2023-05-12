@@ -76,6 +76,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
   return (
     <form onSubmit={handleSubmit}>
+        <h3 id='logo'>Log In</h3>
       <div>
         <label htmlFor="username">Username:</label>
         <input type="text" id="username" value={username} onChange={handleUsernameChange} />

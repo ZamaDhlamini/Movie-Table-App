@@ -83,7 +83,7 @@ const App: React.FC = () => {
   return (
     <div>
       {/* <Header /> */}
-      <h1 style={{fontFamily: "monospace"}}>Movie APP</h1>
+      <h1 id='title' style={{fontFamily: "monospace"}}>Movie APP</h1>
       <Auth onLogin={handleLogin} onRegister={handleRegister} isLoggedIn={isLoggedIn} />
       {isLoggedIn && <MovieTable />}
     </div>
