@@ -1,25 +1,39 @@
-// import { MovieActionEnum } from "./action";
-// import { IMovie, IMovieStateContext } from "./context";
+import { MovieActionEnum } from "./action";
+import { IMovieStateContext } from "./context";
 
-// export function MovieReducer(incomingState: IMovieStateContext, action: ReduxActions.Action<IMovieStateContext>): IMovieStateContext {
+export function MovieReducer(
+  incomingState: IMovieStateContext,
+  action: ReduxActions.Action<IMovieStateContext>
+): IMovieStateContext {
+  const { type, payload } = action;
 
-//     const { type, payload } = action;
+  switch (type) {
+    case MovieActionEnum.CreateMovieRequest:
+      return {
+        ...incomingState,
+        MovieGotten: [...incomingState.MovieGotten, payload.MovieCreated],
+      };
 
-//     switch (type) {
-//         case MovieActionEnum.CreateMovieRequest:
-//             return { ...incomingState, fetchedMovie:[...incomingState?.fetchedMovie, payload.CreateMovie]};
-//         case MovieActionEnum.UpdateMovieRequest:
-//             const {UpdateMovie}=payload;
-//             const filteredMovies=[...incomingState?.fetchedMovie].filter(({id})=>id!=UpdateMovie?.id)
-//             return { ...incomingState, fetchedMovie:[...filteredMovies, UpdateMovie]};
+    case MovieActionEnum.UpdateMovieRequest:
+      const { MovieUpdated } = payload;
+      const filteredMovies = [...incomingState?.MovieGotten].filter(
+        ({ id }) => id != MovieUpdated?.id
+      );
+      return {
+        ...incomingState,
+        MovieGotten: [...filteredMovies, MovieUpdated],
+      };
 
-//         case MovieActionEnum.getMovieDetailsRequest:   
-//           return {...incomingState,...payload}     
-//         case MovieActionEnum.DeleteMovieRequest:
-//             const {deletedMovie}=payload;
-//             const filtered=[...incomingState?.fetchedMovie].filter(({id})=>id!=deletedMovie)
-//             return { ...incomingState, fetchedMovie:[...filtered]};
-//              default:
-//         return incomingState;
-//     }
-// }
+    case MovieActionEnum.GetMovieRequest:
+      return { ...incomingState, ...payload };
+
+    case MovieActionEnum.DeleteMovieRequest:
+      const { DeletedMovieId } = payload;
+      const filtered = [...incomingState?.MovieGotten].filter(
+        ({ id }) => id != DeletedMovieId
+      );
+      return { ...incomingState, MovieGotten: [...filtered] };
+    default:
+      return incomingState;
+  }
+}

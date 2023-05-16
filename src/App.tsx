@@ -64,6 +64,8 @@ import MovieTable from './MovieTable';
 import { useNavigate } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import { Header } from 'antd/es/layout/layout';
+import './navBarStyle.css';
+import Profile from './components/Profile';
 
 const App: React.FC = () => {
   const navigate = useNavigate();
@@ -85,8 +87,12 @@ const App: React.FC = () => {
     <div>
       {/* <Header /> */}
       <NavBar />
-      <h1 id='title' style={{fontFamily: "monospace"}}>Movie APP</h1>
+      <div className='logoHead'>
+      <h1 id='title' style={{fontFamily: "monospace"}}>Movie Buff</h1>
+      </div>
+      <div className='loginButton'>
       <Auth onLogin={handleLogin} onRegister={handleRegister} isLoggedIn={isLoggedIn} />
+      </div>
       {isLoggedIn && <MovieTable />}
     </div>
   );

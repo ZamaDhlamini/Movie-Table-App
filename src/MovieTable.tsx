@@ -1,16 +1,10 @@
 import { useState, useEffect } from "react";
-// import "./App.css";
 import "./table.css"
 import * as React from "react";
-// import { useTable, useSortBy } from "react-table";
 import { useTable, Column } from "react-table";
-import ViewTable from "./ViewTable";
-import { type } from "os";
-import MovieDetails from "./MovieDetails";
 import { Button, Modal, Form, Input } from 'antd';
 import type { SizeType } from "antd/es/config-provider/SizeContext";
-
-
+import { useMovies } from "./providers/movies";
 
 
 function MovieTable(){
@@ -21,35 +15,35 @@ function MovieTable(){
     staring?: string;
     category?: string;
     release_date?: number;
-    poster?: "./barbie_poster"
   }
 
-  const _data = [
-    {
-      id: 1,
-      title: "Barbie Movie",
-      duration: "1h 30m",
-      staring: "Barbie",
-      category: "Animation",
-      poster: "barbie_poster.jpg",
-    },
-    // ...
-  ];
 
-  
     const [data, setData] = React.useState<Data[]>([]);
+    const { getMovie, MovieGotten} = useMovies();
+    //SEARCHING STATE VARIABLE
+    const [searchText, setSearchText] = useState('');
+    //FILTERED DATA VARIABLE
+    const [filteredData, setFilteredData] = useState<Data[]>(data);
+    //EDIT AFTER VIEW
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [editedData, setEditedData] = useState<Data>({});
+    //VIEW STATE
+    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+    const [selectedRowData, setSelectedRowData] = useState<Data>({});
+    //CREATING A NEW MOVIE WITH THE API
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [confirmLoading, setConfirmLoading] = useState(false);
+    const [form] = Form.useForm();
+    
+    
     const columns = React.useMemo(
       () => [
-        // {
-        //   Header: "ID",
-        //   accessor: "id",
-        // },
         {
           Header: "Poster",
           accessor: "poster",
           Cell: ({ row }: { row: any }) => (
             <div className="poster">
-            <img src="barbie_poster" />
+            <img src="barbie_poster.jpg" />
             </div>
           ),
         },
@@ -88,20 +82,13 @@ function MovieTable(){
       ],
       []
     );
+
   
-    React.useEffect(() => {
-      fetch("https://localhost:44311/api/services/app/Movie/GetAll")
-        .then((response) => response.json())
-        .then((data) => setData(data.result));
+    useEffect(() => {
+      // check if user is authenticated
+        getMovie();
     }, []);
-
-
-    //SEARCHING STATE VARIABLE
-  const [searchText, setSearchText] = useState('');
-  
-  //FILTERED DATA VARIABLE
-  const [filteredData, setFilteredData] = useState<Data[]>(data);
-  
+      
   //HANDLE SEARCH FUNCTION
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
@@ -127,21 +114,33 @@ useEffect(() => {
   setFilteredData(newFilteredData);
 }, [searchText, data]);
 
-
-
-    //EDIT AFTER VIEW
-    const [isEditMode, setIsEditMode] = useState(false);
-    const [editedData, setEditedData] = useState<Data>({});
-
     const handleEditClick = () => {
       setIsEditMode(true);
       setEditedData(selectedRowData); // Initialize editedData with the current values
     }
 
-    const handleSaveClick = () => {
-      // Update the data in your application's state or API with editedData
-      // ...
-      setIsEditMode(false);
+    const handleSaveClick =  async () => {
+      // event.preventDefault();
+      
+      try {
+        // Make a PUT request to update the data
+        const response = await fetch('https://localhost:44311/api/services/app/Movie/Update', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(editedData),
+        });
+    
+        if (response.ok) {
+          // Data updated successfully
+          setIsEditMode(false);
+        } else {
+          // Handle error if the request was not successful
+        }
+      } catch (error) {
+        // Handle error if an exception occurred
+      }
     }
 
     const handleCancelClick = () => {
@@ -175,19 +174,12 @@ useEffect(() => {
       );
     }
 
-    
-    //VIEW STATE
-    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-    const [selectedRowData, setSelectedRowData] = useState<Data>({});
-
-
     //VIEW MODAL FUNCTIONS
-
     const showViewModal = (rowData: Data) => {
       setSelectedRowData(rowData ?? {});
       setIsViewModalOpen(true);
     }
-
+     //#region handle view 
     const handleViewOk = () => {
       setIsViewModalOpen(false);
     }
@@ -195,7 +187,7 @@ useEffect(() => {
     const viewCancelClick = () => {
       setIsViewModalOpen(false);
     }
-
+     //#endregion handle view
     //sort data variables
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
@@ -225,7 +217,7 @@ useEffect(() => {
         <>
           <Modal
             title="Detail of Movie"
-            visible={isViewModalOpen}
+            open={isViewModalOpen}
             onOk={handleViewOk}
             footer={[
               isEditMode ? (
@@ -262,13 +254,6 @@ useEffect(() => {
       );
     };
     
-
-    //CREATING A NEW MOVIE WITH THE API
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [confirmLoading, setConfirmLoading] = useState(false);
-    const [form] = Form.useForm();
-  
-
     const handleOk = () => {
       form
       .validateFields()
@@ -327,19 +312,18 @@ useEffect(() => {
       return (
         <Modal
           title="Add Movie"
-          visible={isModalVisible}
+          open={isModalVisible}
           onOk={handleOk}
           confirmLoading={confirmLoading}
           onCancel={() => setIsModalVisible(false)}
-          
         >
+            <Input />
           <Form form={form} layout="vertical">
             <Form.Item
               label="Title"
               name="title"
               rules={[{ required: true, message: "Please input the title!" }]}
             >
-              <Input />
             </Form.Item>
             <Form.Item
               label="Duration"
@@ -429,3 +413,5 @@ useEffect(() => {
     
   }
   export default MovieTable;
+
+

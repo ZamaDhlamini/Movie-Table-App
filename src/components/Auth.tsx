@@ -16,17 +16,17 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onRegister, isLoggedIn }) => {
   };
 
   if (isLoggedIn) {
-    return <p>You are already logged in!</p>;
+    return <p></p>;
   }
 
   return (
     <>
       {showLogin ? (
         <>
-          <h2>Login</h2>
+          {/* <h2>Login</h2> */}
           <Login onLogin={onLogin} />
           <p>
-            Don't have an account? <button onClick={handleSwitchAuthMode}>Register</button>
+           <button onClick={handleSwitchAuthMode}>Register</button>
           </p>
         </>
       ) : (

@@ -46,7 +46,7 @@ const MovieDetails: React.FC<Props> = ({ movie, visible, onClose }) => {
   return (
     <Modal
       title={movie.title}
-      visible={visible}
+      open={visible}
       onCancel={onClose}
       footer={null}
     >

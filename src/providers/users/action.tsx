@@ -1,9 +1,11 @@
-import { IUser, IUserStateContext } from "./context";
+import { IUser, IUserStateContext, ILogin } from "./context";
 import {createAction} from "redux-actions";
 
 
 export enum UserActionEnum{
-    CreateUserRequest = 'CREATE'
+    CreateUserRequest = 'CREATE',
+    LoginRequest = 'LOGIN'
 }
 
-export const CreateUserRequestAction = createAction<IUserStateContext, IUser>(UserActionEnum.CreateUserRequest, () => ({}));
+export const CreateUserRequestAction = createAction<IUserStateContext, IUser>(UserActionEnum.CreateUserRequest, (UserCreated) => ({UserCreated}));
+export const LoginRequestAction = createAction<IUserStateContext, ILogin>(UserActionEnum.LoginRequest, (Login) => ({Login}));

@@ -10,8 +10,14 @@ export interface IUser{
 
 }
 
+export interface ILogin{
+    password: string;
+    EmailAddress: string;
+}
+
 export interface IUserStateContext{
     readonly UserCreated?: IUser;
+    readonly Login?: ILogin;
 
 }
 
@@ -19,6 +25,7 @@ export const INITIAL_STATE: IUserStateContext = {}
 
 export interface IUserActionContext{
     createUser?:(payload:IUser) => void;
+    login?:(payload: ILogin) => void;
 
 }
 
